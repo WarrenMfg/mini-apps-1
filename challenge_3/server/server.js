@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 const morgan = require('morgan');
-const bodyParser = require('body-parser'); // assuming this will be required for forms again
+const bodyParser = require('body-parser');
 const router = require('./routes.js');
 const port = 8080;
 
