@@ -3,6 +3,7 @@ const app = express();
 
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+bodyParser.urlencoded({extended: false});
 const router = require('./routes.js');
 const port = 8080;
 

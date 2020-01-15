@@ -18,10 +18,19 @@ class App extends React.Component {
 
   handleCheckoutToF1() {
     this.setState({F1: true});
+    // fetch('http://127.0.0.1:8080/checkout/F1', {
+    //   method: "POST",
+    //   body: JSON.stringify(),
+    //   headers: {
+    //     "Content-Type": "application/json"
+    //   }
+    // })
   }
 
-  handleF1toF2() {
+  handleF1toF2(e) {
+    e.preventDefault();
     this.setState({F1: false, F2: true});
+    console.log('clicking next');
   }
 
   handleF2toF3() {
@@ -37,6 +46,7 @@ class App extends React.Component {
   }
 
   // "For the basic requirements, you MUST place all of your React components into one file, app.jsx"
+  // XSS needs to be handled for every form (SQL injection)
   render() {
     if (!this.state.F1 && !this.state.F2 && !this.state.F3 && !this.state.confirm) {
       return (
@@ -50,7 +60,14 @@ class App extends React.Component {
         <div>
           <h1>Multistep Checkout</h1>
           <h2>Please provide your account information</h2>
-          <button onClick={this.handleF1toF2}>Next</button>
+          <form>
+            <input
+              type="text"
+              value="name"
+
+            />
+            <input type="submit" value="Next" onClick={this.handleF1toF2} />
+          </form>
         </div>
       );
     } else if (this.state.F2) {

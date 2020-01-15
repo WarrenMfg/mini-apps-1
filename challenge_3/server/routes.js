@@ -1,10 +1,7 @@
 const routes = require('express').Router();
 
-routes.get('/F1', (req, res) => {
-
-});
-
 routes.post('/F1', (req, res) => {
+  console.log(req.body);
   res.sendStatus(200);
 });
 
