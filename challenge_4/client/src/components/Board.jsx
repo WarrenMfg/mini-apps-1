@@ -1,0 +1,18 @@
+import React from 'react';
+import Row from './Row.jsx';
+
+class Board extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <div className="Board">
+        {this.props.board.map((row, i) => <Row rowArray={row} row={i} key={i} />)}
+      </div>
+    );
+  }
+}
+
+export default Board;
