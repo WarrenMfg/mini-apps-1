@@ -8,8 +8,12 @@ class Board extends React.Component {
 
   render() {
     return (
-      <div className="Board">
-        {this.props.board.map((row, i) => <Row rowArray={row} row={i} key={i} />)}
+      <div className="Board" onClick={this.props.handlePlay}>
+        {this.props.board.map((row, i) =>
+          <Row
+          rowArray={row}
+          row={i}
+          key={i} />)}
       </div>
     );
   }
