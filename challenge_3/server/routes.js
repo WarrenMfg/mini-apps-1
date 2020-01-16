@@ -10,7 +10,7 @@ routes.post('/F1', (req, res) => {
       console.log('error at routes.post /F1', err);
     } else {
       console.log('success at routes.post /F1', success);
-      res.sendStatus(200);
+      res.status(200).json(success.insertId);
     }
   })
 });
@@ -29,9 +29,33 @@ routes.post('/F2', (req, res) => {
       console.log('error at routes.post /F2', err);
     } else {
       console.log('success at routes.post /F2', success);
-      res.sendStatus(200);
+      res.status(200).json(success.insertId);
     }
   })
 });
+
+routes.post('/F3', (req, res) => {
+  let params = [
+    req.body.cc,
+    'temp_salt',
+    req.body.expiry,
+    'temp_salt',
+    req.body.cvv,
+    'temp_salt',
+    req.body.billingZip
+  ];
+  db.query('INSERT INTO F3 (cc, salt_cc, exp, salt_exp, cvv, salt_cvv, billing_zip) VALUES (?, ?, ?, ?, ?, ?, ?)', params, (err, success) => {
+    if (err) {
+      console.log('error at routes.post /F3', err);
+    } else {
+      console.log('success at routes.post /F3', success);
+      res.status(200).json(success.insertId);
+    }
+  })
+});
+
+// routes.get('/confirm', (req, res) => {
+
+// });
 
 module.exports = routes;

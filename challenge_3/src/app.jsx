@@ -4,11 +4,13 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      F1insertId: null,
       F1: false,
       F1name: '',
       F1email: '',
       F1password: '',
 
+      F2insertId: null,
       F2: false,
       F2address1: '',
       F2address2: '',
@@ -17,7 +19,13 @@ class App extends React.Component {
       F2zip: '',
       F2phone: '',
 
+      F3insertId: null,
       F3: false,
+      F3cc: '',
+      F3expiry: '',
+      F3cvv: '',
+      F3zip: '',
+
       confirm: false
     }; // zero-out state after confirmation
     this.handleCheckoutToF1 = this.handleCheckoutToF1.bind(this);
@@ -34,7 +42,10 @@ class App extends React.Component {
     this.F2HandlePhone = this.F2HandlePhone.bind(this);
     this.handleF2toF3 = this.handleF2toF3.bind(this);
 
-    //
+    this.F3HandleCC = this.F3HandleCC.bind(this);
+    this.F3HandleExpiry = this.F3HandleExpiry.bind(this);
+    this.F3HandleCVV = this.F3HandleCVV.bind(this);
+    this.F3HandleZip = this.F3HandleZip.bind(this);
 
     this.handleF3toConfirm = this.handleF3toConfirm.bind(this);
     this.handleConfirm = this.handleConfirm.bind(this);
@@ -73,9 +84,10 @@ class App extends React.Component {
         "Content-Type": "application/json"
       }
     })
-      .then(data => {
-        console.log('F1 data', data);
-        this.setState({F1: false, F2: true});
+      .then(data => data.json())
+      .then(id => {
+        console.log('F1 insertId', id);
+        this.setState({F1insertId: id, F1: false, F2: true});
       })
       .catch(err => console.log(err));
   }
@@ -124,29 +136,65 @@ class App extends React.Component {
         "Content-Type": "application/json"
       }
     })
-      .then(data => {
-        console.log('F2 data', data);
-        this.setState({F2: false, F3: true});
+      .then(data => data.json())
+      .then(id => {
+        console.log('F2 insertId', id);
+        this.setState({F2insertId: id, F2: false, F3: true});
+      })
+      .catch(err => console.log(err));
+  }
+
+  // F3 ///////////////////////////////////////////////
+  F3HandleCC(e) {
+    this.setState({F3cc: e.target.value});
+  }
+
+  F3HandleExpiry(e) {
+    this.setState({F3expiry: e.target.value});
+  }
+
+  F3HandleCVV(e) {
+    this.setState({F3cvv: e.target.value});
+  }
+
+  F3HandleZip(e) {
+    this.setState({F3zip: e.target.value});
+  }
+
+  handleF3toConfirm(e) {
+    e.preventDefault();
+
+    let F3 = {
+      cc: this.state.F3cc,
+      expiry: this.state.F3expiry,
+      cvv: this.state.F3cvv,
+      billingZip: this.state.F3zip
+    };
+
+    fetch('http://127.0.0.1:8080/checkout/F3', {
+      method: "POST",
+      body: JSON.stringify(F3), // figure out how to encrypt
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(data => data.json())
+      .then(id => {
+        console.log('F3 insertId', id);
+        this.setState({F3insertId: id, F3: false, confirm: true});
       })
       .catch(err => console.log(err));
   }
 
 
-
-
-
-
-
-  handleF3toConfirm() {
-    this.setState({F3: false, confirm: true});
-  }
-
+  // F4 ///////////////////////////////////////////////
   handleConfirm() {
     this.setState({confirm: false});
   }
 
   // "For the basic requirements, you MUST place all of your React components into one file, app.jsx"
   // XSS needs to be handled for every form (SQL injection)
+  // On purchase abandonment, use insertIds to DELETE FROM each table WHERE id...
   render() {
     if (!this.state.F1 && !this.state.F2 && !this.state.F3 && !this.state.confirm) {
       return (
@@ -220,7 +268,7 @@ class App extends React.Component {
               required
             />
             <input
-              placeholder="zip code"
+              placeholder="shipping zip code"
               type="text"
               value={this.state.F2zip}
               onChange={this.F2HandleZip}
@@ -242,7 +290,37 @@ class App extends React.Component {
         <div>
           <h1>Multistep Checkout</h1>
           <h2>Please provide your payment information</h2>
-          <button onClick={this.handleF3toConfirm}>Confirm</button>
+          <form>
+            <input
+              placeholder="credit card number"
+              type="text"
+              value={this.state.F3cc}
+              onChange={this.F3HandleCC}
+              required
+            />
+            <input
+              placeholder="expiration date"
+              type="text"
+              value={this.state.F3expiry}
+              onChange={this.F3HandleExpiry}
+              required
+            />
+            <input
+              placeholder="CVV"
+              type="text"
+              value={this.state.F3cvv}
+              onChange={this.F3HandleCVV}
+              required
+            />
+            <input
+              placeholder="billing zip code"
+              type="text"
+              value={this.state.F3zip}
+              onChange={this.F3HandleZip}
+              required
+            />
+            <button onClick={this.handleF3toConfirm}>Confirm</button>
+          </form>
         </div>
       );
     } else if (this.state.confirm) {
@@ -250,6 +328,23 @@ class App extends React.Component {
         <div>
           <h1>Multistep Checkout</h1>
           <h2>Please confirm your purchase information</h2>
+          <div>
+            {/* F1name
+            F1email
+            F1password
+
+            F2address1
+            F2address2
+            F2city
+            F2state
+            F2zip
+            F2phone
+
+            F3cc
+            F3expiry
+            F3cvv
+            F3zip */}
+          </div>
           <button onClick={this.handleConfirm}>Purchase</button>
         </div>
       );
