@@ -17,6 +17,7 @@ CREATE TABLE F2 (
   `city` VARCHAR(255) NOT NULL,
   `state` VARCHAR(255) NOT NULL,
   `shipping_zip` INT NOT NULL,
+  `phone` VARCHAR(255) NOT NULL,
   PRIMARY KEY (ID)
 );
 

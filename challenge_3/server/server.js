@@ -3,7 +3,7 @@ const app = express();
 
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-bodyParser.urlencoded({extended: false});
+// bodyParser.urlencoded({extended: false}); --> means url contains credentials?
 const router = require('./routes.js');
 const port = 8080;
 
