@@ -16,7 +16,7 @@ CREATE TABLE F2 (
   `address2` VARCHAR(255),
   `city` VARCHAR(255) NOT NULL,
   `state` VARCHAR(255) NOT NULL,
-  `shipping_zip` INT NOT NULL,
+  `shipping_zip` VARCHAR(255) NOT NULL,
   `phone` VARCHAR(255) NOT NULL,
   PRIMARY KEY (ID)
 );
@@ -29,7 +29,7 @@ CREATE TABLE F3 (
   `salt_exp` VARCHAR(255) NOT NULL,
   `cvv` VARCHAR(255) NOT NULL,
   `salt_cvv` VARCHAR(255) NOT NULL,
-  `billing_zip` INT NOT NULL,
+  `billing_zip` VARCHAR(255) NOT NULL,
   PRIMARY KEY (ID)
 );
 
