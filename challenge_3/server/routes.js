@@ -9,7 +9,7 @@ routes.post('/F1', (req, res) => {
     if (err) {
       console.log('error at routes.post /F1', err);
     } else {
-      console.log('success at routes.post /F1', success);
+      // console.log('success at routes.post /F1', success);
       res.status(200).json(success.insertId);
     }
   })
@@ -28,7 +28,7 @@ routes.post('/F2', (req, res) => {
     if (err) {
       console.log('error at routes.post /F2', err);
     } else {
-      console.log('success at routes.post /F2', success);
+      // console.log('success at routes.post /F2', success);
       res.status(200).json(success.insertId);
     }
   })
@@ -43,19 +43,26 @@ routes.post('/F3', (req, res) => {
     req.body.cvv,
     'temp_salt',
     req.body.billingZip
-  ];
+  ]; // add salt function
   db.query('INSERT INTO F3 (cc, salt_cc, exp, salt_exp, cvv, salt_cvv, billing_zip) VALUES (?, ?, ?, ?, ?, ?, ?)', params, (err, success) => {
     if (err) {
       console.log('error at routes.post /F3', err);
     } else {
-      console.log('success at routes.post /F3', success);
+      // console.log('success at routes.post /F3', success);
       res.status(200).json(success.insertId);
     }
   })
 });
 
-// routes.get('/confirm', (req, res) => {
-
-// });
+routes.get('/confirm/:id', (req, res) => {
+  let id = req.originalUrl.slice(req.originalUrl.indexOf('=') + 1);
+  db.query('SELECT F1.name, F1.email, F1.password, F2.address1, F2.address2, F2.city, F2.state, F2.shipping_zip, F2.phone, F3.cc, F3.exp, F3.cvv, F3.billing_zip FROM F1 INNER JOIN F2 ON F1.id=F2.id INNER JOIN F3 ON F2.id=F3.id WHERE F1.id=(?)', [id, id, id], (err, data) => {
+    if (err) {
+      console.log('error at routes.get /confirm/:id', err);
+    } else {
+      res.status(200).json(data);
+    }
+  });
+});
 
 module.exports = routes;

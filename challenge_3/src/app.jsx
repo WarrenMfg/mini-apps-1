@@ -26,7 +26,8 @@ class App extends React.Component {
       F3cvv: '',
       F3zip: '',
 
-      confirm: false
+      confirm: false,
+      confirmData: {}
     }; // zero-out state after confirmation
     this.handleCheckoutToF1 = this.handleCheckoutToF1.bind(this);
     this.F1HandleName = this.F1HandleName.bind(this);
@@ -46,8 +47,8 @@ class App extends React.Component {
     this.F3HandleExpiry = this.F3HandleExpiry.bind(this);
     this.F3HandleCVV = this.F3HandleCVV.bind(this);
     this.F3HandleZip = this.F3HandleZip.bind(this);
-
     this.handleF3toConfirm = this.handleF3toConfirm.bind(this);
+
     this.handleConfirm = this.handleConfirm.bind(this);
   }
 
@@ -69,27 +70,29 @@ class App extends React.Component {
   }
 
   handleF1toF2(e) {
-    e.preventDefault();
+    if (this.state.F1name && this.state.F1email && this.state.F1password) {
+      e.preventDefault();
 
-    let F1 = {
-      name: this.state.F1name,
-      email: this.state.F1email,
-      password: this.state.F1password
-    };
+      let F1 = {
+        name: this.state.F1name,
+        email: this.state.F1email,
+        password: this.state.F1password
+      };
 
-    fetch('http://127.0.0.1:8080/checkout/F1', {
-      method: "POST",
-      body: JSON.stringify(F1), // figure out how to encrypt
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-      .then(data => data.json())
-      .then(id => {
-        console.log('F1 insertId', id);
-        this.setState({F1insertId: id, F1: false, F2: true});
+      fetch('http://127.0.0.1:8080/checkout/F1', {
+        method: "POST",
+        body: JSON.stringify(F1), // figure out how to encrypt
+        headers: {
+          "Content-Type": "application/json"
+        }
       })
-      .catch(err => console.log(err));
+        .then(data => data.json())
+        .then(id => {
+          console.log('F1 insertId', id);
+          this.setState({F1insertId: id, F1: false, F2: true});
+        })
+        .catch(err => console.log(err));
+    }
   }
 
   // F2 ///////////////////////////////////////////////
@@ -118,30 +121,32 @@ class App extends React.Component {
   }
 
   handleF2toF3(e) {
-    e.preventDefault();
+    if (this.state.F2address1 && this.state.F2city && this.state.F2state && this.state.F2zip && this.state.F2phone) {
+      e.preventDefault();
 
-    let F2 = {
-      address1: this.state.F2address1,
-      address2: this.state.F2address2,
-      city: this.state.F2city,
-      state: this.state.F2state,
-      shippingZip: this.state.F2zip,
-      phone: this.state.F2phone
-    };
+      let F2 = {
+        address1: this.state.F2address1,
+        address2: this.state.F2address2,
+        city: this.state.F2city,
+        state: this.state.F2state,
+        shippingZip: this.state.F2zip,
+        phone: this.state.F2phone
+      };
 
-    fetch('http://127.0.0.1:8080/checkout/F2', {
-      method: "POST",
-      body: JSON.stringify(F2), // figure out how to encrypt
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-      .then(data => data.json())
-      .then(id => {
-        console.log('F2 insertId', id);
-        this.setState({F2insertId: id, F2: false, F3: true});
+      fetch('http://127.0.0.1:8080/checkout/F2', {
+        method: "POST",
+        body: JSON.stringify(F2), // figure out how to encrypt
+        headers: {
+          "Content-Type": "application/json"
+        }
       })
-      .catch(err => console.log(err));
+        .then(data => data.json())
+        .then(id => {
+          console.log('F2 insertId', id);
+          this.setState({F2insertId: id, F2: false, F3: true});
+        })
+        .catch(err => console.log(err));
+    }
   }
 
   // F3 ///////////////////////////////////////////////
@@ -162,34 +167,71 @@ class App extends React.Component {
   }
 
   handleF3toConfirm(e) {
-    e.preventDefault();
+    if (this.state.F3cc && this.state.F3expiry && this.state.F3cvv && this.state.F3zip) {
+      e.preventDefault();
 
-    let F3 = {
-      cc: this.state.F3cc,
-      expiry: this.state.F3expiry,
-      cvv: this.state.F3cvv,
-      billingZip: this.state.F3zip
-    };
+      let F3 = {
+        cc: this.state.F3cc,
+        expiry: this.state.F3expiry,
+        cvv: this.state.F3cvv,
+        billingZip: this.state.F3zip
+      };
 
-    fetch('http://127.0.0.1:8080/checkout/F3', {
-      method: "POST",
-      body: JSON.stringify(F3), // figure out how to encrypt
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-      .then(data => data.json())
-      .then(id => {
-        console.log('F3 insertId', id);
-        this.setState({F3insertId: id, F3: false, confirm: true});
+      fetch('http://127.0.0.1:8080/checkout/F3', {
+        method: "POST",
+        body: JSON.stringify(F3), // figure out how to encrypt
+        headers: {
+          "Content-Type": "application/json"
+        }
       })
-      .catch(err => console.log(err));
+        .then(data => data.json())
+        .then(id => {
+          console.log('F3 insertId', id);
+          this.setState({F3insertId: id});
+        })
+        .then(() => {
+          fetch(`http://127.0.0.1:8080/checkout/confirm/id=${this.state.F1insertId}`) // assuming all ids are same
+            .then(data => data.json())
+            .then(obj => {
+              console.log('confirmation get request response:', obj);
+              this.setState({F3: false, confirm: true, confirmData: obj[0]});
+            })
+            .catch(err => console.log(err));
+        })
+        .catch(err => console.log(err));
+    }
   }
 
 
   // F4 ///////////////////////////////////////////////
   handleConfirm() {
-    this.setState({confirm: false});
+    // reset state
+    this.setState({
+      F1insertId: null,
+      F1: false,
+      F1name: '',
+      F1email: '',
+      F1password: '',
+
+      F2insertId: null,
+      F2: false,
+      F2address1: '',
+      F2address2: '',
+      F2city: '',
+      F2state: '',
+      F2zip: '',
+      F2phone: '',
+
+      F3insertId: null,
+      F3: false,
+      F3cc: '',
+      F3expiry: '',
+      F3cvv: '',
+      F3zip: '',
+
+      confirm: false,
+      confirmData: {}
+    });
   }
 
   // "For the basic requirements, you MUST place all of your React components into one file, app.jsx"
@@ -329,21 +371,21 @@ class App extends React.Component {
           <h1>Multistep Checkout</h1>
           <h2>Please confirm your purchase information</h2>
           <div>
-            {/* F1name
-            F1email
-            F1password
+            <p>Name: {this.state.confirmData.name}</p>
+            <p>Email: {this.state.confirmData.email}</p>
+            <p>Password: {this.state.confirmData.password}</p>
 
-            F2address1
-            F2address2
-            F2city
-            F2state
-            F2zip
-            F2phone
+            <p>Address 1: {this.state.confirmData.address1}</p>
+            <p>Address 2: {this.state.confirmData.address2}</p>
+            <p>City: {this.state.confirmData.city}</p>
+            <p>State: {this.state.confirmData.state}</p>
+            <p>Shipping Zip Code: {this.state.confirmData.shipping_zip}</p>
+            <p>Phone: {this.state.confirmData.phone}</p>
 
-            F3cc
-            F3expiry
-            F3cvv
-            F3zip */}
+            <p>Credit Card Number: {this.state.confirmData.cc}</p>
+            <p>Expiration Date: {this.state.confirmData.exp}</p>
+            <p>CVV: {this.state.confirmData.cvv}</p>
+            <p>Billing Zip Code: {this.state.confirmData.billing_zip}</p>
           </div>
           <button onClick={this.handleConfirm}>Purchase</button>
         </div>
