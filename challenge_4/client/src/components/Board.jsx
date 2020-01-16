@@ -6,6 +6,12 @@ class Board extends React.Component {
     super(props);
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps !== this.props) {
+      this.props.checkForWinner();
+    }
+  }
+
   render() {
     return (
       <div className="Board" onClick={this.props.handlePlay}>

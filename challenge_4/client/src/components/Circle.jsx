@@ -9,10 +9,10 @@ class Circle extends React.Component {
     // props: row, column, player
     return (
       <span
-        className="Circle"
+        className={`Circle ${this.props.play ? "Circle-play" : ""}`}
         data-row={this.props.row}
         data-column={this.props.column}
-        data-player={this.props.player}
+        data-play={this.props.play} // is this needed?
       >&nbsp;</span>
     );
   }

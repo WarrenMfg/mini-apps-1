@@ -9,11 +9,11 @@ class Row extends React.Component {
   render() {
     return (
       <div className="Row">
-        {this.props.rowArray.map((player, i) =>
+        {this.props.rowArray.map((play, i) =>
           <Circle
             row={this.props.row}
             column={i}
-            player={player}
+            play={play}
             key={i} />)}
       </div>
     );
