@@ -6,11 +6,11 @@ class Board extends React.Component {
     super(props);
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps !== this.props) {
-      this.props.checkForWinner();
-    }
-  }
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (prevProps.board !== this.props.board) {
+  //     this.props.checkForWinner();
+  //   }
+  // }
 
   render() {
     return (

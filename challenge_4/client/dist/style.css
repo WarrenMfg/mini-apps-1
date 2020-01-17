@@ -24,6 +24,10 @@ body {
   cursor: pointer;
 }
 
-.Circle-play {
+.Circle-playerOne {
   background-color: red;
+}
+
+.Circle-playerTwo {
+  background-color: yellow;
 }
