@@ -1,5 +1,6 @@
 import React from 'react';
 import Board from './Board.jsx';
+import Scoreboard from './Scoreboard.jsx';
 
 class App extends React.Component {
   constructor(props) {
@@ -15,10 +16,24 @@ class App extends React.Component {
       ],
       isGameWon: false,
       winner: null,
-      turn: 1
+      turn: 1,
+      insertId: null,
+      currentScore: 0,
+      scores: [120, 114, 99] // these nums should not be rendered
     };
     this.handlePlay = this.handlePlay.bind(this);
     this.handleRestart = this.handleRestart.bind(this);
+  }
+
+  componentDidMount() {
+    // fetch scores here
+    fetch('http://127.0.0.1:8080/onload')
+      .then(data => data.json())
+      .then(scores => {
+        this.setState({scores: scores});
+      })
+      .catch(err => console.log('componentDidMount fetch failed:', err));
+    // setState with scores
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -32,11 +47,59 @@ class App extends React.Component {
     let column = this.checkColumns();
     let forwardD = this.checkForwardD();
     let backwardD = this.checkBackwardD();
-    if (row || column || forwardD  || backwardD) {
-      this.setState({isGameWon: true, winner: row || column || forwardD || backwardD});
+
+    // check for winner
+    if (row || column || forwardD || backwardD) {
+      console.log(row, column, forwardD, backwardD);
+      let newScore = {
+        score: this.state.currentScore + 1,
+        insertId: this.state.insertId
+      };
+
+      // if id assigned
+      if (this.state.insertId) {
+        fetch('http://127.0.0.1:8080/update-score', {
+          method: 'PUT',
+          body: JSON.stringify(newScore),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(data => data.json())
+        .then(data => {
+          this.setState({
+            isGameWon: true,
+            winner: row || column || forwardD || backwardD,
+            currentScore: data[data.length - 1].score,
+            scores: data
+          });
+        })
+        .catch(err => console.log('error updating score'));
+
+      } else { // no id assigned
+
+        fetch('http://127.0.0.1:8080/add-score', {
+          method: 'POST',
+          body: JSON.stringify(newScore),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(data => data.json())
+        .then(data => {
+          this.setState({
+            isGameWon: true,
+            winner: row || column || forwardD || backwardD,
+            insertId: data[data.length - 1].id,
+            currentScore: data[data.length - 1].score,
+            scores: data
+          });
+        })
+        .catch(err => console.log('error adding score', err));
+      }
+
     } else if (this.state.turn === 2) {
-      setTimeout(() => this.playerTwosTurn(), 1500);
-      ;
+      setTimeout(() => this.playerTwosTurn(), Math.floor(Math.random() * 1250));
     }
   }
 
@@ -232,13 +295,14 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="App">
+        <div className="App-game">
         <h1>Mini apps - Challenge 4</h1>
         <h2>Connect Four</h2>
         <h3>You are Player 1 (red)</h3>
         <Board
           board={this.state.board}
-          handlePlay={this.handlePlay}
+          handlePlay={this.state.turn === 1 ? this.handlePlay : null}
           isGameWon={this.state.isGameWon}
         />
         {this.state.isGameWon ?
@@ -248,6 +312,14 @@ class App extends React.Component {
           className="App-restart"
           onClick={this.handleRestart}
         >Restart</button>
+        </div>
+        <div className="App-scoreboard">
+          <h1>Scoreboard</h1>
+          <h2>All-time Top Scores</h2>
+          <h3>Try to make it to the top!</h3>
+          <Scoreboard scores={this.state.scores} />
+        </div>
+
       </div>
     );
   }
