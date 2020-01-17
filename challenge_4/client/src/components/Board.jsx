@@ -14,7 +14,7 @@ class Board extends React.Component {
 
   render() {
     return (
-      <div className="Board" onClick={this.props.handlePlay}>
+      <div className="Board" onClick={this.props.isGameWon ? null : this.props.handlePlay}>
         {this.props.board.map((row, i) =>
           <Row
           rowArray={row}

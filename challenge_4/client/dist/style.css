@@ -31,3 +31,7 @@ body {
 .Circle-playerTwo {
   background-color: yellow;
 }
+
+.App-winner {
+  color: green;
+}

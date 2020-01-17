@@ -21,11 +21,9 @@ class App extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    console.log('componentDidUpdate')
     if (prevState.turn !== this.state.turn) {
       this.checkForWinner();
-    }
-    if (this.state.turn === 2) {
-      this.playerTwosTurn();
     }
   }
 
@@ -33,9 +31,11 @@ class App extends React.Component {
     let row = this.checkRows(); // receives 1 or 2 or false
     let column = this.checkColumns();
     let forwardD = this.checkForwardD();
-    // let backwardD = this.checkBackwardD();
-    if (row || column || forwardD /* || backwardD*/) {
-      this.setState({isGameWon: true, winner: row || column || forwardD});
+    let backwardD = this.checkBackwardD();
+    if (row || column || forwardD  || backwardD) {
+      this.setState({isGameWon: true, winner: row || column || forwardD || backwardD});
+    } else if (this.state.turn === 2) {
+      this.playerTwosTurn();
     }
   }
 
@@ -136,13 +136,19 @@ class App extends React.Component {
     return false; // i < 0
   }
 
+  checkBackwardD() {
+
+  }
+
 
 
   handlePlay(e, playerTwo) {
     if ('row' in e.target.dataset && 'column' in e.target.dataset) { // if click is a circle
-      // let row = parseInt(e.target.dataset.row, 10); // is this needed?
-      let column = playerTwo ? parseInt(playerTwo.target.dataset.column, 10) : parseInt(e.target.dataset.column, 10);
+
       let board = this.state.board;
+      let column = playerTwo ?
+        parseInt(playerTwo.target.dataset.column, 10) :
+        parseInt(e.target.dataset.column, 10);
 
       if (board[0][column] === null) { // if column is not filled up yet
         // figure out which row to place play
@@ -159,6 +165,7 @@ class App extends React.Component {
           prevState.board[prevState.board.length - 1][column] = playerTwo ? 2 : 1;
           return {board: prevState.board, turn: prevState.turn === 1 ? 2 : 1};
         });
+
       } else if (this.state.turn === 2) {
         console.log('playerTwosTurn... column was full, trying again')
         this.playerTwosTurn(); // to handle column's random number landing on full col
@@ -185,12 +192,14 @@ class App extends React.Component {
         <h1>Mini apps - Challenge 4</h1>
         <h2>Connect Four</h2>
         <h3>You are Player 1 (red)</h3>
+        <Board
+          board={this.state.board}
+          handlePlay={this.handlePlay}
+          isGameWon={this.state.isGameWon}
+        />
         {this.state.isGameWon ?
-          <h1>PLAYER {this.state.winner} WINS!!!</h1> :
-          <Board
-            board={this.state.board}
-            handlePlay={this.handlePlay}
-          />}
+          <h1 className="App-winner">PLAYER {this.state.winner} WINS!!!</h1> :
+          <h1>You can do it!</h1>}
       </div>
     );
   }
