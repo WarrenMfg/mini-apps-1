@@ -18,10 +18,10 @@ class App extends React.Component {
       turn: 1
     };
     this.handlePlay = this.handlePlay.bind(this);
+    this.handleRestart = this.handleRestart.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log('componentDidUpdate')
     if (prevState.turn !== this.state.turn) {
       this.checkForWinner();
     }
@@ -35,7 +35,8 @@ class App extends React.Component {
     if (row || column || forwardD  || backwardD) {
       this.setState({isGameWon: true, winner: row || column || forwardD || backwardD});
     } else if (this.state.turn === 2) {
-      this.playerTwosTurn();
+      setTimeout(() => this.playerTwosTurn(), 1500);
+      ;
     }
   }
 
@@ -195,7 +196,6 @@ class App extends React.Component {
         });
 
       } else if (this.state.turn === 2) {
-        console.log('playerTwosTurn... column was full, trying again')
         this.playerTwosTurn(); // to handle column's random number landing on full col
       }
     }
@@ -214,6 +214,22 @@ class App extends React.Component {
     this.handlePlay(playerTwo, playerTwo);
   }
 
+  handleRestart() {
+    this.setState({
+      board: [
+        [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null]
+      ],
+      isGameWon: false,
+      winner: null,
+      turn: 1
+    })
+  }
+
   render() {
     return (
       <div>
@@ -227,7 +243,11 @@ class App extends React.Component {
         />
         {this.state.isGameWon ?
           <h1 className="App-winner">PLAYER {this.state.winner} WINS!!!</h1> :
-          <h1>You can do it!</h1>}
+          <h1>{this.state.turn === 1 ? "Player 1's turn" : "Player 2's turn"}</h1>}
+        <button
+          className="App-restart"
+          onClick={this.handleRestart}
+        >Restart</button>
       </div>
     );
   }

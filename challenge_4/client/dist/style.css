@@ -3,10 +3,35 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.App-winner {
+  color: green;
+}
+
+.App-restart {
+  font-size: 18px;
+  border: none;
+  background-color: green;
+  color: white;
+  width: 120px;
+  height: 40px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.App-restart:hover {
+  transform: scale(1.1);
+  font-weight: bold;
+  box-shadow: 0 0 20px black;
+}
+
 .Board {
+  width: 50vw;
+  margin: 0 auto;
   background-color: rgb(0, 68, 255);
   padding: 10px;
   border-radius: 25px;
+  box-shadow: 0vw 1vw rgb(0, 0, 128);
 }
 
 .Row {
@@ -18,20 +43,19 @@ body {
 .Circle {
   display: inline-block;
   border-radius: 50%;
-  width: 10vw;
-  height: 10vw;
+  width: 5vw;
+  height: 5vw;
   background-color: white;
   cursor: pointer;
+  box-shadow: 0 0.75vw rgb(0, 0, 128) inset;
 }
 
 .Circle-playerOne {
   background-color: red;
+  box-shadow: 0 0.75vw 0.5vw rgb(0, 0, 128) inset;
 }
 
 .Circle-playerTwo {
   background-color: yellow;
-}
-
-.App-winner {
-  color: green;
+  box-shadow: 0 0.75vw 0.5vw rgb(0, 0, 128) inset;
 }
