@@ -108,7 +108,7 @@ class App extends React.Component {
     for (let i = board.length - 1; i >= 0; i--) {
       for (let j = 0; j < board[i].length; j++) {
         if (board[i][j]) {
-          let isD = this.isPlayForwardD(board[i][j], (i - 1), (j + 1)); // player, row - 1, col - 1
+          let isD = this.isPlayForwardD(board[i][j], (i - 1), (j + 1)); // player, row - 1, col + 1
           if (isD) {
             return isD;
           }
@@ -137,10 +137,38 @@ class App extends React.Component {
   }
 
   checkBackwardD() {
+    let board = this.state.board;
 
+    for (let i = board.length - 1; i >= 0; i--) {
+      for (let j = 0; j < board[i].length; j++) {
+        if (board[i][j]) {
+          let isD = this.isPlayBackwardD(board[i][j], (i - 1), (j - 1)); // player, row - 1, col - 1
+          if (isD) {
+            return isD;
+          }
+        }
+      }
+    }
+    return false;
   }
 
+  isPlayBackwardD(player, row, column) {
+    let count = 1; // bc already counting play from checkBackwardD
+    let board = this.state.board;
 
+    for (let i = row; i >= 0; i--) {
+      if (board[i][column] === player) {
+        count++;
+        if (count === 4) {
+          return player;
+        }
+      } else {
+        return false;
+      }
+      column--; // check next forwardD
+    }
+    return false; // i < 0
+  }
 
   handlePlay(e, playerTwo) {
     if ('row' in e.target.dataset && 'column' in e.target.dataset) { // if click is a circle
