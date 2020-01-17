@@ -8,7 +8,7 @@ class Scoreboard extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="Scoreboard">
         {this.props.scores
           .map(score => score)
           .sort((a, b) => a.score - b.score)

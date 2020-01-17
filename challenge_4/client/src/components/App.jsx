@@ -50,7 +50,6 @@ class App extends React.Component {
 
     // check for winner
     if (row || column || forwardD || backwardD) {
-      console.log(row, column, forwardD, backwardD);
       let newScore = {
         score: this.state.currentScore + 1,
         insertId: this.state.insertId
