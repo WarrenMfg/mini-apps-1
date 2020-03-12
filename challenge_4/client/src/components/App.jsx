@@ -27,7 +27,7 @@ class App extends React.Component {
 
   componentDidMount() {
     // fetch scores here
-    fetch('http://127.0.0.1:8080/onload')
+    fetch('/onload')
       .then(data => data.json())
       .then(scores => {
         this.setState({scores: scores});
@@ -57,7 +57,7 @@ class App extends React.Component {
 
       // if id assigned
       if (this.state.insertId) {
-        fetch('http://127.0.0.1:8080/update-score', {
+        fetch('/update-score', {
           method: 'PUT',
           body: JSON.stringify(newScore),
           headers: {
@@ -77,7 +77,7 @@ class App extends React.Component {
 
       } else { // no id assigned
 
-        fetch('http://127.0.0.1:8080/add-score', {
+        fetch('/add-score', {
           method: 'POST',
           body: JSON.stringify(newScore),
           headers: {
@@ -296,8 +296,8 @@ class App extends React.Component {
     return (
       <div className="App">
         <div className="App-game">
-        <h1>Mini apps - Challenge 4</h1>
-        <h2>Connect Four</h2>
+        <h1>Connect Four</h1>
+        <h2>The vertical four-in-a-row checkers game</h2>
         <h3>You are Player 1 (red)</h3>
         <Board
           board={this.state.board}
